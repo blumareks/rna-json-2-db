@@ -29,9 +29,12 @@ class PerformanceMetricsIndex(db.Model):
     index_no = db.Column(db.Integer, nullable=False)
     timestamp = db.Column(db.String(12), nullable=False)  # YYYYMMDDHHMM
 
+with app.app_context():
+    db.create_all()
+
 class PerformanceMetricsData(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    index_no = db.Column(db.Integer, db.ForeignKey('performance_metrics_index.index_no'), nullable=False)
+    index_no = db.Column(db.Integer, nullable=True)
     device_id = db.Column(db.String(50), nullable=False)
     device_name = db.Column(db.String(100), nullable=False)
     object_id = db.Column(db.String(50), nullable=False)
@@ -40,6 +43,9 @@ class PerformanceMetricsData(db.Model):
     jitter = db.Column(db.Float, nullable=True)
     latency = db.Column(db.Float, nullable=True)
     timestamp = db.Column(db.String(12), nullable=False)  # YYYYMMDDHHMM
+
+with app.app_context():
+    db.create_all()
 
 def get_next_index():
     """Retrieve and update the index counter."""
@@ -68,13 +74,18 @@ def fetch_performance_metrics():
 
 @app.route('/data/pullperformancemetrics', methods=['GET'])
 def pull_performance_metrics():
+    print("pulling performance metrics from RNA - index no:")
     index_no = get_next_index()
+    print(index_no)
+
 
     # Clear previous entries for this index
     PerformanceMetricsData.query.filter_by(index_no=index_no).delete()
+    print("cleared prvious performance metrics for this index")
     
     metrics_data = fetch_performance_metrics()
     if not metrics_data:
+        print("Failed to fetch performance metrics")
         return jsonify({'error': 'Failed to fetch performance metrics'}), 500
 
     timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M")
