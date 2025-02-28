@@ -13,7 +13,7 @@ load_dotenv()
 
 # Retrieve the database configuration from the environment
 URI = os.getenv("URL")
-RNA_URL = os.getenv("RNA_URL")
+RNA_URL = os.getenv("RNA_DATA_URL")
 app = Flask(__name__)
 
 # prepare SQLAlchemy DB
