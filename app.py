@@ -51,7 +51,7 @@ def get_next_index():
     """Retrieve and update the index counter."""
     index_record = PerformanceMetricsIndex.query.order_by(PerformanceMetricsIndex.id.desc()).first()
     if index_record:
-        new_index = index_record.index_no + 1 if index_record.index_no < 10000 else 1
+        new_index = index_record.index_no + 1 if index_record.index_no < 20000 else 1
     else:
         new_index = 1
 
